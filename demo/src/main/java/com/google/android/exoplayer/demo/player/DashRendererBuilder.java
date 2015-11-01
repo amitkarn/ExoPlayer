@@ -15,6 +15,12 @@
  */
 package com.google.android.exoplayer.demo.player;
 
+import android.content.Context;
+import android.media.AudioManager;
+import android.media.MediaCodec;
+import android.os.Handler;
+import android.util.Log;
+
 import com.google.android.exoplayer.DefaultLoadControl;
 import com.google.android.exoplayer.LoadControl;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
@@ -38,6 +44,7 @@ import com.google.android.exoplayer.demo.player.DemoPlayer.RendererBuilder;
 import com.google.android.exoplayer.drm.MediaDrmCallback;
 import com.google.android.exoplayer.drm.StreamingDrmSessionManager;
 import com.google.android.exoplayer.drm.UnsupportedDrmException;
+import com.google.android.exoplayer.ext.okhttp.OkHttpDataSource;
 import com.google.android.exoplayer.text.TextTrackRenderer;
 import com.google.android.exoplayer.upstream.DataSource;
 import com.google.android.exoplayer.upstream.DefaultAllocator;
@@ -47,13 +54,9 @@ import com.google.android.exoplayer.upstream.UriDataSource;
 import com.google.android.exoplayer.util.ManifestFetcher;
 import com.google.android.exoplayer.util.Util;
 
-import android.content.Context;
-import android.media.AudioManager;
-import android.media.MediaCodec;
-import android.os.Handler;
-import android.util.Log;
-
 import java.io.IOException;
+
+import okhttp3.CacheControl;
 
 /**
  * A {@link RendererBuilder} for DASH.
@@ -122,7 +125,8 @@ public class DashRendererBuilder implements RendererBuilder {
       this.drmCallback = drmCallback;
       this.player = player;
       MediaPresentationDescriptionParser parser = new MediaPresentationDescriptionParser();
-      manifestDataSource = new DefaultUriDataSource(context, userAgent);
+      manifestDataSource = new DefaultUriDataSource(context, null,
+              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, null, CacheControl.FORCE_NETWORK));
       manifestFetcher = new ManifestFetcher<>(url, manifestDataSource, parser);
     }
 
@@ -213,7 +217,8 @@ public class DashRendererBuilder implements RendererBuilder {
       }
 
       // Build the video renderer.
-      DataSource videoDataSource = new DefaultUriDataSource(context, bandwidthMeter, userAgent);
+      DataSource videoDataSource = new DefaultUriDataSource(context, bandwidthMeter,
+              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, CacheControl.FORCE_NETWORK));
       ChunkSource videoChunkSource = new DashChunkSource(manifestFetcher,
           DefaultDashTrackSelector.newVideoInstance(context, true, filterHdContent),
           videoDataSource, new AdaptiveEvaluator(bandwidthMeter), LIVE_EDGE_LATENCY_MS,
@@ -226,7 +231,8 @@ public class DashRendererBuilder implements RendererBuilder {
           drmSessionManager, true, mainHandler, player, 50);
 
       // Build the audio renderer.
-      DataSource audioDataSource = new DefaultUriDataSource(context, bandwidthMeter, userAgent);
+      DataSource audioDataSource = new DefaultUriDataSource(context, bandwidthMeter,
+              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, CacheControl.FORCE_NETWORK));
       ChunkSource audioChunkSource = new DashChunkSource(manifestFetcher,
           DefaultDashTrackSelector.newAudioInstance(), audioDataSource, null, LIVE_EDGE_LATENCY_MS,
           elapsedRealtimeOffset, mainHandler, player, DemoPlayer.TYPE_AUDIO);
@@ -238,7 +244,8 @@ public class DashRendererBuilder implements RendererBuilder {
           AudioCapabilities.getCapabilities(context), AudioManager.STREAM_MUSIC);
 
       // Build the text renderer.
-      DataSource textDataSource = new DefaultUriDataSource(context, bandwidthMeter, userAgent);
+      DataSource textDataSource = new DefaultUriDataSource(context, bandwidthMeter,
+              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, CacheControl.FORCE_NETWORK));
       ChunkSource textChunkSource = new DashChunkSource(manifestFetcher,
           DefaultDashTrackSelector.newTextInstance(), textDataSource, null, LIVE_EDGE_LATENCY_MS,
           elapsedRealtimeOffset, mainHandler, player, DemoPlayer.TYPE_TEXT);

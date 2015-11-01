@@ -15,32 +15,6 @@
  */
 package com.google.android.exoplayer.demo;
 
-import com.google.android.exoplayer.AspectRatioFrameLayout;
-import com.google.android.exoplayer.ExoPlaybackException;
-import com.google.android.exoplayer.ExoPlayer;
-import com.google.android.exoplayer.MediaCodecTrackRenderer.DecoderInitializationException;
-import com.google.android.exoplayer.MediaCodecUtil.DecoderQueryException;
-import com.google.android.exoplayer.MediaFormat;
-import com.google.android.exoplayer.audio.AudioCapabilities;
-import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
-import com.google.android.exoplayer.demo.player.DashRendererBuilder;
-import com.google.android.exoplayer.demo.player.DemoPlayer;
-import com.google.android.exoplayer.demo.player.DemoPlayer.RendererBuilder;
-import com.google.android.exoplayer.demo.player.ExtractorRendererBuilder;
-import com.google.android.exoplayer.demo.player.HlsRendererBuilder;
-import com.google.android.exoplayer.demo.player.SmoothStreamingRendererBuilder;
-import com.google.android.exoplayer.drm.UnsupportedDrmException;
-import com.google.android.exoplayer.metadata.GeobMetadata;
-import com.google.android.exoplayer.metadata.PrivMetadata;
-import com.google.android.exoplayer.metadata.TxxxMetadata;
-import com.google.android.exoplayer.text.CaptionStyleCompat;
-import com.google.android.exoplayer.text.Cue;
-import com.google.android.exoplayer.text.SubtitleLayout;
-import com.google.android.exoplayer.util.DebugTextViewHelper;
-import com.google.android.exoplayer.util.MimeTypes;
-import com.google.android.exoplayer.util.Util;
-import com.google.android.exoplayer.util.VerboseLogUtil;
-
 import android.Manifest.permission;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -69,9 +43,32 @@ import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.net.CookieHandler;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
+import com.google.android.exoplayer.AspectRatioFrameLayout;
+import com.google.android.exoplayer.ExoPlaybackException;
+import com.google.android.exoplayer.ExoPlayer;
+import com.google.android.exoplayer.MediaCodecTrackRenderer.DecoderInitializationException;
+import com.google.android.exoplayer.MediaCodecUtil.DecoderQueryException;
+import com.google.android.exoplayer.MediaFormat;
+import com.google.android.exoplayer.audio.AudioCapabilities;
+import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
+import com.google.android.exoplayer.demo.player.DashRendererBuilder;
+import com.google.android.exoplayer.demo.player.DemoPlayer;
+import com.google.android.exoplayer.demo.player.DemoPlayer.RendererBuilder;
+import com.google.android.exoplayer.demo.player.ExtractorRendererBuilder;
+import com.google.android.exoplayer.demo.player.HlsRendererBuilder;
+import com.google.android.exoplayer.demo.player.SmoothStreamingRendererBuilder;
+import com.google.android.exoplayer.drm.UnsupportedDrmException;
+import com.google.android.exoplayer.metadata.GeobMetadata;
+import com.google.android.exoplayer.metadata.PrivMetadata;
+import com.google.android.exoplayer.metadata.TxxxMetadata;
+import com.google.android.exoplayer.text.CaptionStyleCompat;
+import com.google.android.exoplayer.text.Cue;
+import com.google.android.exoplayer.text.SubtitleLayout;
+import com.google.android.exoplayer.util.DebugTextViewHelper;
+import com.google.android.exoplayer.util.MimeTypes;
+import com.google.android.exoplayer.util.Util;
+import com.google.android.exoplayer.util.VerboseLogUtil;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -94,12 +91,6 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
   private static final String TAG = "PlayerActivity";
   private static final int MENU_GROUP_TRACKS = 1;
   private static final int ID_OFFSET = 2;
-
-  private static final CookieManager defaultCookieManager;
-  static {
-    defaultCookieManager = new CookieManager();
-    defaultCookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
-  }
 
   private EventLogger eventLogger;
   private MediaController mediaController;
@@ -177,11 +168,6 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
     videoButton = (Button) findViewById(R.id.video_controls);
     audioButton = (Button) findViewById(R.id.audio_controls);
     textButton = (Button) findViewById(R.id.text_controls);
-
-    CookieHandler currentHandler = CookieHandler.getDefault();
-    if (currentHandler != defaultCookieManager) {
-      CookieHandler.setDefault(defaultCookieManager);
-    }
 
     audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(this, this);
     audioCapabilitiesReceiver.register();

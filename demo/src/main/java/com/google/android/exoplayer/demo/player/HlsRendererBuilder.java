@@ -15,6 +15,11 @@
  */
 package com.google.android.exoplayer.demo.player;
 
+import android.content.Context;
+import android.media.AudioManager;
+import android.media.MediaCodec;
+import android.os.Handler;
+
 import com.google.android.exoplayer.DefaultLoadControl;
 import com.google.android.exoplayer.LoadControl;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
@@ -23,6 +28,7 @@ import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
 import com.google.android.exoplayer.TrackRenderer;
 import com.google.android.exoplayer.audio.AudioCapabilities;
 import com.google.android.exoplayer.demo.player.DemoPlayer.RendererBuilder;
+import com.google.android.exoplayer.ext.okhttp.OkHttpDataSource;
 import com.google.android.exoplayer.hls.DefaultHlsTrackSelector;
 import com.google.android.exoplayer.hls.HlsChunkSource;
 import com.google.android.exoplayer.hls.HlsMasterPlaylist;
@@ -41,13 +47,10 @@ import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.util.ManifestFetcher;
 import com.google.android.exoplayer.util.ManifestFetcher.ManifestCallback;
 
-import android.content.Context;
-import android.media.AudioManager;
-import android.media.MediaCodec;
-import android.os.Handler;
-
 import java.io.IOException;
 import java.util.Map;
+
+import okhttp3.CacheControl;
 
 /**
  * A {@link RendererBuilder} for HLS.
@@ -100,7 +103,8 @@ public class HlsRendererBuilder implements RendererBuilder {
       this.url = url;
       this.player = player;
       HlsPlaylistParser parser = new HlsPlaylistParser();
-      playlistFetcher = new ManifestFetcher<>(url, new DefaultUriDataSource(context, userAgent),
+      playlistFetcher = new ManifestFetcher<>(url, new DefaultUriDataSource(context, null,
+              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, null, CacheControl.FORCE_NETWORK)),
           parser);
     }
 
@@ -133,7 +137,8 @@ public class HlsRendererBuilder implements RendererBuilder {
       PtsTimestampAdjusterProvider timestampAdjusterProvider = new PtsTimestampAdjusterProvider();
 
       // Build the video/audio/metadata renderers.
-      DataSource dataSource = new DefaultUriDataSource(context, bandwidthMeter, userAgent);
+      DataSource dataSource = new DefaultUriDataSource(context, bandwidthMeter,
+              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, CacheControl.FORCE_NETWORK));
       HlsChunkSource chunkSource = new HlsChunkSource(true /* isMaster */, dataSource, url,
           manifest, DefaultHlsTrackSelector.newDefaultInstance(context), bandwidthMeter,
           timestampAdjusterProvider, HlsChunkSource.ADAPTIVE_MODE_SPLICE);
@@ -155,7 +160,8 @@ public class HlsRendererBuilder implements RendererBuilder {
       }
       TrackRenderer textRenderer;
       if (preferWebvtt) {
-        DataSource textDataSource = new DefaultUriDataSource(context, bandwidthMeter, userAgent);
+        DataSource textDataSource = new DefaultUriDataSource(context, bandwidthMeter,
+                new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, CacheControl.FORCE_NETWORK));
         HlsChunkSource textChunkSource = new HlsChunkSource(false /* isMaster */, textDataSource,
             url, manifest, DefaultHlsTrackSelector.newVttInstance(), bandwidthMeter,
             timestampAdjusterProvider, HlsChunkSource.ADAPTIVE_MODE_SPLICE);
