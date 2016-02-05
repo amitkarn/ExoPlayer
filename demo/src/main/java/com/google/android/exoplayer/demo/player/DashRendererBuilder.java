@@ -79,20 +79,21 @@ public class DashRendererBuilder implements RendererBuilder {
   private final String userAgent;
   private final String url;
   private final MediaDrmCallback drmCallback;
-
+  private final CacheControl cacheControl;
   private AsyncRendererBuilder currentAsyncBuilder;
 
   public DashRendererBuilder(Context context, String userAgent, String url,
-      MediaDrmCallback drmCallback) {
+                             MediaDrmCallback drmCallback, CacheControl cacheControl) {
     this.context = context;
     this.userAgent = userAgent;
     this.url = url;
     this.drmCallback = drmCallback;
+    this.cacheControl = cacheControl;
   }
 
   @Override
   public void buildRenderers(DemoPlayer player) {
-    currentAsyncBuilder = new AsyncRendererBuilder(context, userAgent, url, drmCallback, player);
+    currentAsyncBuilder = new AsyncRendererBuilder(context, userAgent, url, drmCallback, player, cacheControl);
     currentAsyncBuilder.init();
   }
 
@@ -113,20 +114,21 @@ public class DashRendererBuilder implements RendererBuilder {
     private final DemoPlayer player;
     private final ManifestFetcher<MediaPresentationDescription> manifestFetcher;
     private final UriDataSource manifestDataSource;
-
+    private final CacheControl cacheControl;
     private boolean canceled;
     private MediaPresentationDescription manifest;
     private long elapsedRealtimeOffset;
 
     public AsyncRendererBuilder(Context context, String userAgent, String url,
-        MediaDrmCallback drmCallback, DemoPlayer player) {
+                                MediaDrmCallback drmCallback, DemoPlayer player, CacheControl cacheControl) {
       this.context = context;
       this.userAgent = userAgent;
       this.drmCallback = drmCallback;
       this.player = player;
+      this.cacheControl = cacheControl;
       MediaPresentationDescriptionParser parser = new MediaPresentationDescriptionParser();
       manifestDataSource = new DefaultUriDataSource(context, null,
-              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, null, CacheControl.FORCE_NETWORK));
+              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, null, cacheControl));
       manifestFetcher = new ManifestFetcher<>(url, manifestDataSource, parser);
     }
 
@@ -218,7 +220,7 @@ public class DashRendererBuilder implements RendererBuilder {
 
       // Build the video renderer.
       DataSource videoDataSource = new DefaultUriDataSource(context, bandwidthMeter,
-              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, CacheControl.FORCE_NETWORK));
+              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, cacheControl));
       ChunkSource videoChunkSource = new DashChunkSource(manifestFetcher,
           DefaultDashTrackSelector.newVideoInstance(context, true, filterHdContent),
           videoDataSource, new AdaptiveEvaluator(bandwidthMeter), LIVE_EDGE_LATENCY_MS,
@@ -232,7 +234,7 @@ public class DashRendererBuilder implements RendererBuilder {
 
       // Build the audio renderer.
       DataSource audioDataSource = new DefaultUriDataSource(context, bandwidthMeter,
-              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, CacheControl.FORCE_NETWORK));
+              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, cacheControl));
       ChunkSource audioChunkSource = new DashChunkSource(manifestFetcher,
           DefaultDashTrackSelector.newAudioInstance(), audioDataSource, null, LIVE_EDGE_LATENCY_MS,
           elapsedRealtimeOffset, mainHandler, player, DemoPlayer.TYPE_AUDIO);
@@ -245,7 +247,7 @@ public class DashRendererBuilder implements RendererBuilder {
 
       // Build the text renderer.
       DataSource textDataSource = new DefaultUriDataSource(context, bandwidthMeter,
-              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, CacheControl.FORCE_NETWORK));
+              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, cacheControl));
       ChunkSource textChunkSource = new DashChunkSource(manifestFetcher,
           DefaultDashTrackSelector.newTextInstance(), textDataSource, null, LIVE_EDGE_LATENCY_MS,
           elapsedRealtimeOffset, mainHandler, player, DemoPlayer.TYPE_TEXT);

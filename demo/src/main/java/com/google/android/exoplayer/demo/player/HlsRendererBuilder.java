@@ -64,18 +64,19 @@ public class HlsRendererBuilder implements RendererBuilder {
   private final Context context;
   private final String userAgent;
   private final String url;
-
+  private final CacheControl cacheControl;
   private AsyncRendererBuilder currentAsyncBuilder;
 
-  public HlsRendererBuilder(Context context, String userAgent, String url) {
+  public HlsRendererBuilder(Context context, String userAgent, String url, CacheControl cacheControl) {
     this.context = context;
     this.userAgent = userAgent;
     this.url = url;
+    this.cacheControl = cacheControl;
   }
 
   @Override
   public void buildRenderers(DemoPlayer player) {
-    currentAsyncBuilder = new AsyncRendererBuilder(context, userAgent, url, player);
+    currentAsyncBuilder = new AsyncRendererBuilder(context, userAgent, url, player, cacheControl);
     currentAsyncBuilder.init();
   }
 
@@ -94,17 +95,19 @@ public class HlsRendererBuilder implements RendererBuilder {
     private final String url;
     private final DemoPlayer player;
     private final ManifestFetcher<HlsPlaylist> playlistFetcher;
-
+    private final CacheControl cacheControl;
     private boolean canceled;
 
-    public AsyncRendererBuilder(Context context, String userAgent, String url, DemoPlayer player) {
+    public AsyncRendererBuilder(Context context, String userAgent, String url, DemoPlayer player,
+                                CacheControl cacheControl) {
       this.context = context;
       this.userAgent = userAgent;
       this.url = url;
       this.player = player;
+      this.cacheControl = cacheControl;
       HlsPlaylistParser parser = new HlsPlaylistParser();
       playlistFetcher = new ManifestFetcher<>(url, new DefaultUriDataSource(context, null,
-              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, null, CacheControl.FORCE_NETWORK)),
+              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, null, cacheControl)),
           parser);
     }
 
@@ -138,7 +141,7 @@ public class HlsRendererBuilder implements RendererBuilder {
 
       // Build the video/audio/metadata renderers.
       DataSource dataSource = new DefaultUriDataSource(context, bandwidthMeter,
-              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, CacheControl.FORCE_NETWORK));
+              new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, cacheControl));
       HlsChunkSource chunkSource = new HlsChunkSource(true /* isMaster */, dataSource, url,
           manifest, DefaultHlsTrackSelector.newDefaultInstance(context), bandwidthMeter,
           timestampAdjusterProvider, HlsChunkSource.ADAPTIVE_MODE_SPLICE);
@@ -161,7 +164,7 @@ public class HlsRendererBuilder implements RendererBuilder {
       TrackRenderer textRenderer;
       if (preferWebvtt) {
         DataSource textDataSource = new DefaultUriDataSource(context, bandwidthMeter,
-                new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, CacheControl.FORCE_NETWORK));
+                new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, cacheControl));
         HlsChunkSource textChunkSource = new HlsChunkSource(false /* isMaster */, textDataSource,
             url, manifest, DefaultHlsTrackSelector.newVttInstance(), bandwidthMeter,
             timestampAdjusterProvider, HlsChunkSource.ADAPTIVE_MODE_SPLICE);

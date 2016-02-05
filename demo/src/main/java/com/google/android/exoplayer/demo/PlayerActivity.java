@@ -72,6 +72,9 @@ import com.google.android.exoplayer.util.VerboseLogUtil;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.CacheControl;
 
 /**
  * An activity that plays media using {@link DemoPlayer}.
@@ -119,6 +122,12 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
   private String provider;
 
   private AudioCapabilitiesReceiver audioCapabilitiesReceiver;
+
+  //private final CacheControl cacheControl = new CacheControl.Builder()
+  //        .maxStale(365, TimeUnit.DAYS)
+  //        .build();
+
+  private final CacheControl cacheControl = CacheControl.FORCE_NETWORK;
 
   // Activity lifecycle
 
@@ -287,14 +296,14 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
     switch (contentType) {
       case Util.TYPE_SS:
         return new SmoothStreamingRendererBuilder(this, userAgent, contentUri.toString(),
-            new SmoothStreamingTestMediaDrmCallback());
+            new SmoothStreamingTestMediaDrmCallback(), cacheControl);
       case Util.TYPE_DASH:
         return new DashRendererBuilder(this, userAgent, contentUri.toString(),
-            new WidevineTestMediaDrmCallback(contentId, provider));
+            new WidevineTestMediaDrmCallback(contentId, provider), cacheControl);
       case Util.TYPE_HLS:
-        return new HlsRendererBuilder(this, userAgent, contentUri.toString());
+        return new HlsRendererBuilder(this, userAgent, contentUri.toString(), cacheControl);
       case Util.TYPE_OTHER:
-        return new ExtractorRendererBuilder(this, userAgent, contentUri);
+        return new ExtractorRendererBuilder(this, userAgent, contentUri, cacheControl);
       default:
         throw new IllegalStateException("Unsupported type: " + contentType);
     }

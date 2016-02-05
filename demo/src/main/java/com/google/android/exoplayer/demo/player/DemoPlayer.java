@@ -20,7 +20,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.Surface;
 
-import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.android.exoplayer.CodecCounters;
 import com.google.android.exoplayer.DummyTrackRenderer;
 import com.google.android.exoplayer.ExoPlaybackException;
@@ -43,20 +42,15 @@ import com.google.android.exoplayer.text.Cue;
 import com.google.android.exoplayer.text.TextRenderer;
 import com.google.android.exoplayer.upstream.BandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer.util.DebugTextViewHelper;
 import com.google.android.exoplayer.util.PlayerControl;
 
 import java.io.IOException;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 
 /**
@@ -195,18 +189,6 @@ public class DemoPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventLi
   private InfoListener infoListener;
   private static OkHttpClient sOkHttpClient;
 
-  static {
-    CookieManager cookieManager = new CookieManager();
-    cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
-    sOkHttpClient = new OkHttpClient.Builder()
-            .addNetworkInterceptor(new StethoInterceptor())
-            .connectTimeout(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-            .readTimeout(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-            .followSslRedirects(false)
-            .cookieJar(new JavaNetCookieJar(cookieManager))
-            .build();
-  }
-
   public DemoPlayer(RendererBuilder rendererBuilder) {
     this.rendererBuilder = rendererBuilder;
     player = ExoPlayer.Factory.newInstance(RENDERER_COUNT, 1000, 5000);
@@ -218,6 +200,10 @@ public class DemoPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventLi
     rendererBuildingState = RENDERER_BUILDING_STATE_IDLE;
     // Disable text initially.
     player.setSelectedTrack(TYPE_TEXT, TRACK_DISABLED);
+  }
+
+  public static void setOkHttpClient(OkHttpClient okHttpClient) {
+    sOkHttpClient = okHttpClient;
   }
 
   public PlayerControl getPlayerControl() {

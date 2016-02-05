@@ -49,11 +49,13 @@ public class ExtractorRendererBuilder implements RendererBuilder {
   private final Context context;
   private final String userAgent;
   private final Uri uri;
+  private final CacheControl cacheControl;
 
-  public ExtractorRendererBuilder(Context context, String userAgent, Uri uri) {
+  public ExtractorRendererBuilder(Context context, String userAgent, Uri uri, CacheControl cacheControl) {
     this.context = context;
     this.userAgent = userAgent;
     this.uri = uri;
+    this.cacheControl = cacheControl;
   }
 
   @Override
@@ -64,7 +66,7 @@ public class ExtractorRendererBuilder implements RendererBuilder {
     DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter(player.getMainHandler(),
         null);
     DataSource dataSource = new DefaultUriDataSource(context, null,
-            new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, CacheControl.FORCE_NETWORK));
+            new OkHttpDataSource(DemoPlayer.getDefaultOkHttpClient(), userAgent, null, bandwidthMeter, cacheControl));
     ExtractorSampleSource sampleSource = new ExtractorSampleSource(uri, dataSource, allocator,
         BUFFER_SEGMENT_COUNT * BUFFER_SEGMENT_SIZE);
     MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(context,
