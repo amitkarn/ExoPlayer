@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -176,7 +177,7 @@ public final class SimpleExoPlayerView extends FrameLayout {
 
   private final AspectRatioFrameLayout contentFrame;
   private final View shutterView;
-  private final View surfaceView;
+  private final GLSurfaceView surfaceView;
   private final ImageView artworkView;
   private final SubtitleView subtitleView;
   private final PlaybackControlView controller;
@@ -243,8 +244,7 @@ public final class SimpleExoPlayerView extends FrameLayout {
     if (contentFrame != null && surfaceType != SURFACE_TYPE_NONE) {
       ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
           ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-      surfaceView = surfaceType == SURFACE_TYPE_TEXTURE_VIEW ? new TextureView(context)
-          : new SurfaceView(context);
+      surfaceView = new GLSurfaceView(context);
       surfaceView.setLayoutParams(params);
       contentFrame.addView(surfaceView, 0);
     } else {
@@ -319,11 +319,11 @@ public final class SimpleExoPlayerView extends FrameLayout {
       shutterView.setVisibility(VISIBLE);
     }
     if (player != null) {
-      if (surfaceView instanceof TextureView) {
-        player.setVideoTextureView((TextureView) surfaceView);
-      } else if (surfaceView instanceof SurfaceView) {
-        player.setVideoSurfaceView((SurfaceView) surfaceView);
-      }
+      // if (surfaceView instanceof TextureView) {
+      //   player.setVideoTextureView((TextureView) surfaceView);
+      // } else if (surfaceView instanceof SurfaceView) {
+        player.setHaha(surfaceView);
+      // }
       player.setVideoListener(componentListener);
       player.addListener(componentListener);
       player.setTextOutput(componentListener);

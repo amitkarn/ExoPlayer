@@ -15,9 +15,10 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.google.android.exoplayer2.demo"
-    android:versionCode="2200"
-    android:versionName="2.2.0">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.google.android.exoplayer2.demo"
+          android:versionCode="2200"
+          android:versionName="2.2.0">
 
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -30,8 +31,8 @@
       android:icon="@mipmap/ic_launcher"
       android:banner="@drawable/ic_banner"
       android:largeHeap="true"
-      android:allowBackup="false"
-      android:name="com.google.android.exoplayer2.demo.DemoApplication">
+      android:name="com.google.android.exoplayer2.demo.DemoApplication"
+      tools:replace="android:label">
 
     <activity android:name="com.google.android.exoplayer2.demo.SampleChooserActivity"
         android:configChanges="keyboardHidden"

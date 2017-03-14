@@ -18,7 +18,7 @@ android {
     buildToolsVersion project.ext.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 9
+        minSdkVersion 16
         targetSdkVersion project.ext.targetSdkVersion
     }
 }

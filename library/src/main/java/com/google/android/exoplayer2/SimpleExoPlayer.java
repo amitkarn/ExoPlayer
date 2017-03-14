@@ -16,10 +16,13 @@
 package com.google.android.exoplayer2;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.SurfaceTexture;
 import android.media.MediaCodec;
 import android.media.PlaybackParams;
+import android.opengl.GLSurfaceView;
 import android.os.Handler;
 import android.support.annotation.IntDef;
 import android.util.Log;
@@ -27,6 +30,9 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
+import android.view.View;
+
+import com.asha.vrlib.MDVRLibrary;
 import com.google.android.exoplayer2.audio.AudioCapabilities;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.audio.MediaCodecAudioRenderer;
@@ -44,6 +50,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Constructor;
@@ -263,6 +270,32 @@ public class SimpleExoPlayer implements ExoPlayer {
    */
   public void setVideoSurfaceView(SurfaceView surfaceView) {
     setVideoSurfaceHolder(surfaceView.getHolder());
+  }
+
+  static Activity getActivity(View view) {
+    Context context = view.getContext();
+    while (context instanceof ContextWrapper) {
+      if (context instanceof Activity) {
+        return (Activity)context;
+      }
+      context = ((ContextWrapper)context).getBaseContext();
+    }
+    return null;
+  }
+
+  public void setHaha(GLSurfaceView glSurfaceView) {
+    MDVRLibrary.with(getActivity(glSurfaceView))
+            .displayMode(MDVRLibrary.DISPLAY_MODE_NORMAL)
+            .interactiveMode(MDVRLibrary.INTERACTIVE_MODE_MOTION)
+            .projectionMode(MDVRLibrary.PROJECTION_MODE_PLANE_FULL)
+            .asVideo(new MDVRLibrary.IOnSurfaceReadyCallback() {
+              @Override
+              public void onSurfaceReady(Surface surface) {
+                // IjkMediaPlayer or MediaPlayer
+                setVideoSurfaceInternal(surface, false);
+              }
+            })
+            .build(glSurfaceView).onResume(glSurfaceView.getContext());
   }
 
   /**

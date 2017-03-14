@@ -26,7 +26,7 @@ android {
         // devices. However, please note that the core video playback
         // functionality provided by the library requires API level 16 or
         // greater.
-        minSdkVersion 9
+        minSdkVersion 16
         targetSdkVersion project.ext.targetSdkVersion
         consumerProguardFiles 'proguard-rules.txt'
     }
@@ -51,6 +51,7 @@ dependencies {
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
     androidTestCompile 'org.mockito:mockito-core:1.9.5'
     compile 'com.android.support:support-annotations:25.0.1'
+    compile 'com.github.ashqal:MD360Player4Android:2.1.0'
 }
 
 android.libraryVariants.all { variant ->
