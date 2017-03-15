@@ -52,6 +52,7 @@ import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 import net.protyposis.android.spectaculum.InputSurfaceHolder;
+import net.protyposis.android.spectaculum.PipelineResolution;
 import net.protyposis.android.spectaculum.SpectaculumView;
 
 import java.lang.annotation.Retention;
@@ -286,10 +287,7 @@ public class SimpleExoPlayer implements ExoPlayer {
     return null;
   }
 
-  SpectaculumView mSpectaculumView;
-
   public void setHaha1(SpectaculumView spectaculumView) {
-    mSpectaculumView = spectaculumView;
     spectaculumView.getInputHolder().addCallback(new InputSurfaceHolder.Callback() {
       @Override
       public void surfaceCreated(InputSurfaceHolder holder) {
@@ -301,11 +299,13 @@ public class SimpleExoPlayer implements ExoPlayer {
 
       }
     });
+    spectaculumView.setPipelineResolution(PipelineResolution.VIEW);
     spectaculumView.onResume();
   }
+  private MDVRLibrary mdvrLibrary;
 
   public void setHaha(GLSurfaceView glSurfaceView) {
-    MDVRLibrary.with(getActivity(glSurfaceView))
+    mdvrLibrary = MDVRLibrary.with(getActivity(glSurfaceView))
             .displayMode(MDVRLibrary.DISPLAY_MODE_NORMAL)
             .interactiveMode(MDVRLibrary.INTERACTIVE_MODE_MOTION)
             .projectionMode(MDVRLibrary.PROJECTION_MODE_PLANE_FULL)
@@ -316,7 +316,8 @@ public class SimpleExoPlayer implements ExoPlayer {
                 setVideoSurfaceInternal(surface, false);
               }
             })
-            .build(glSurfaceView).onResume(glSurfaceView.getContext());
+            .build(glSurfaceView);
+    mdvrLibrary.onResume(glSurfaceView.getContext());
   }
 
   /**
@@ -931,8 +932,9 @@ public class SimpleExoPlayer implements ExoPlayer {
         videoDebugListener.onVideoSizeChanged(width, height, unappliedRotationDegrees,
             pixelWidthHeightRatio);
       }
-      if (mSpectaculumView != null) {
-        mSpectaculumView.updateResolution(width, height);
+
+      if (mdvrLibrary != null) {
+        mdvrLibrary.onTextureResize(width, height);
       }
     }
 

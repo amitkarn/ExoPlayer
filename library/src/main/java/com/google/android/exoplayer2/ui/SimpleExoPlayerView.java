@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -31,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -47,6 +47,9 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout.ResizeMode;
 import com.google.android.exoplayer2.ui.PlaybackControlView.SeekDispatcher;
 import com.google.android.exoplayer2.util.Assertions;
+
+import net.protyposis.android.spectaculum.SpectaculumView;
+
 import java.util.List;
 
 /**
@@ -177,7 +180,7 @@ public final class SimpleExoPlayerView extends FrameLayout {
 
   private final AspectRatioFrameLayout contentFrame;
   private final View shutterView;
-  private final GLSurfaceView surfaceView;
+  private final View surfaceView;
   private final ImageView artworkView;
   private final SubtitleView subtitleView;
   private final PlaybackControlView controller;
@@ -244,7 +247,8 @@ public final class SimpleExoPlayerView extends FrameLayout {
     if (contentFrame != null && surfaceType != SURFACE_TYPE_NONE) {
       ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
           ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-      surfaceView = new GLSurfaceView(context);
+      //surfaceView = new GLSurfaceView(context);
+      surfaceView = new SpectaculumView(context);
       surfaceView.setLayoutParams(params);
       contentFrame.addView(surfaceView, 0);
     } else {
@@ -322,7 +326,8 @@ public final class SimpleExoPlayerView extends FrameLayout {
       // if (surfaceView instanceof TextureView) {
       //   player.setVideoTextureView((TextureView) surfaceView);
       // } else if (surfaceView instanceof SurfaceView) {
-        player.setHaha(surfaceView);
+      //  player.setHaha((GLSurfaceView) surfaceView);
+        player.setHaha1((SpectaculumView) surfaceView);
       // }
       player.setVideoListener(componentListener);
       player.addListener(componentListener);
@@ -671,6 +676,9 @@ public final class SimpleExoPlayerView extends FrameLayout {
       if (contentFrame != null) {
         float aspectRatio = height == 0 ? 1 : (width * pixelWidthHeightRatio) / height;
         contentFrame.setAspectRatio(aspectRatio);
+      }
+      if (surfaceView instanceof SpectaculumView) {
+        ((SpectaculumView) surfaceView).updateResolution(width, height);
       }
     }
 
