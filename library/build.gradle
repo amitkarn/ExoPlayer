@@ -51,7 +51,9 @@ dependencies {
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
     androidTestCompile 'org.mockito:mockito-core:1.9.5'
     compile 'com.android.support:support-annotations:25.0.1'
-    compile 'com.github.ashqal:MD360Player4Android:2.1.0'
+//    compile 'com.github.ashqal:MD360Player4Android:2.1.0'
+    compile project(':md')
+    compile 'net.protyposis.android.spectaculum:spectaculum:1.2.0'
 }
 
 android.libraryVariants.all { variant ->

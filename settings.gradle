@@ -20,6 +20,7 @@ include ':extension-vp9'
 include ':extension-okhttp'
 include ':extension-flac'
 include ':extension-ffmpeg'
+include ':md'
 // Uncomment the following line to use the Cronet Extension.
 // include ':extension-cronet'
 
@@ -29,6 +30,7 @@ project(':extension-vp9').projectDir = new File(settingsDir, 'extensions/vp9')
 project(':extension-okhttp').projectDir = new File(settingsDir, 'extensions/okhttp')
 project(':extension-flac').projectDir = new File(settingsDir, 'extensions/flac')
 project(':extension-ffmpeg').projectDir = new File(settingsDir, 'extensions/ffmpeg')
+project(':md').projectDir = new File(settingsDir, 'md/vrlib')
 // Uncomment the following line to use the Cronet Extension.
 // See extensions/cronet/README.md for details.
 // project(':extension-cronet').projectDir = new File(settingsDir, 'extensions/cronet')

@@ -51,6 +51,9 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
+import net.protyposis.android.spectaculum.InputSurfaceHolder;
+import net.protyposis.android.spectaculum.SpectaculumView;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Constructor;
@@ -281,6 +284,24 @@ public class SimpleExoPlayer implements ExoPlayer {
       context = ((ContextWrapper)context).getBaseContext();
     }
     return null;
+  }
+
+  SpectaculumView mSpectaculumView;
+
+  public void setHaha1(SpectaculumView spectaculumView) {
+    mSpectaculumView = spectaculumView;
+    spectaculumView.getInputHolder().addCallback(new InputSurfaceHolder.Callback() {
+      @Override
+      public void surfaceCreated(InputSurfaceHolder holder) {
+        setVideoSurfaceInternal(holder.getSurface(), false);
+      }
+
+      @Override
+      public void surfaceDestroyed(InputSurfaceHolder holder) {
+
+      }
+    });
+    spectaculumView.onResume();
   }
 
   public void setHaha(GLSurfaceView glSurfaceView) {
@@ -909,6 +930,9 @@ public class SimpleExoPlayer implements ExoPlayer {
       if (videoDebugListener != null) {
         videoDebugListener.onVideoSizeChanged(width, height, unappliedRotationDegrees,
             pixelWidthHeightRatio);
+      }
+      if (mSpectaculumView != null) {
+        mSpectaculumView.updateResolution(width, height);
       }
     }
 
