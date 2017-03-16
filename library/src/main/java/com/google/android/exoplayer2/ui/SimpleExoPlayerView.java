@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -247,8 +248,8 @@ public final class SimpleExoPlayerView extends FrameLayout {
     if (contentFrame != null && surfaceType != SURFACE_TYPE_NONE) {
       ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
           ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-      //surfaceView = new GLSurfaceView(context);
-      surfaceView = new SpectaculumView(context);
+      surfaceView = new GLSurfaceView(context);
+      //surfaceView = new SpectaculumView(context);
       surfaceView.setLayoutParams(params);
       contentFrame.addView(surfaceView, 0);
     } else {
@@ -326,8 +327,8 @@ public final class SimpleExoPlayerView extends FrameLayout {
       // if (surfaceView instanceof TextureView) {
       //   player.setVideoTextureView((TextureView) surfaceView);
       // } else if (surfaceView instanceof SurfaceView) {
-      //  player.setHaha((GLSurfaceView) surfaceView);
-        player.setHaha1((SpectaculumView) surfaceView);
+        player.setHaha((GLSurfaceView) surfaceView);
+        //player.setHaha1((SpectaculumView) surfaceView);
       // }
       player.setVideoListener(componentListener);
       player.addListener(componentListener);

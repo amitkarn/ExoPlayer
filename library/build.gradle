@@ -53,7 +53,8 @@ dependencies {
     compile 'com.android.support:support-annotations:25.0.1'
 //    compile 'com.github.ashqal:MD360Player4Android:2.1.0'
     compile project(':md')
-    compile 'net.protyposis.android.spectaculum:spectaculum:1.2.0'
+    compile project(':spec-core')
+//    compile 'net.protyposis.android.spectaculum:spectaculum:1.2.0'
 }
 
 android.libraryVariants.all { variant ->

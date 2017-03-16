@@ -38,5 +38,13 @@ allprojects {
         releaseGroupId = 'com.google.android.exoplayer'
         releaseVersion = 'r2.2.0'
         releaseWebsite = 'https://github.com/google/ExoPlayer'
+        libraryVersionCode = 3
+        libraryVersionName = '1.2.0'
+        packageBase = 'net.protyposis.android.spectaculum'
+        librarySnaphotEnabled = true
+
+        libraryVersionString = {
+            return libraryVersionName + (librarySnaphotEnabled ? '-SNAPSHOT' : '')
+        }
     }
 }

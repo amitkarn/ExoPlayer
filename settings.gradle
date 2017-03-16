@@ -21,6 +21,7 @@ include ':extension-okhttp'
 include ':extension-flac'
 include ':extension-ffmpeg'
 include ':md'
+include ':spec-core'
 // Uncomment the following line to use the Cronet Extension.
 // include ':extension-cronet'
 
@@ -31,6 +32,7 @@ project(':extension-okhttp').projectDir = new File(settingsDir, 'extensions/okht
 project(':extension-flac').projectDir = new File(settingsDir, 'extensions/flac')
 project(':extension-ffmpeg').projectDir = new File(settingsDir, 'extensions/ffmpeg')
 project(':md').projectDir = new File(settingsDir, 'md/vrlib')
+project(':spec-core').projectDir = new File(settingsDir, 'spec/Spectaculum-Core')
 // Uncomment the following line to use the Cronet Extension.
 // See extensions/cronet/README.md for details.
 // project(':extension-cronet').projectDir = new File(settingsDir, 'extensions/cronet')

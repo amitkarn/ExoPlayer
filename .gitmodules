@@ -1,3 +1,6 @@
 [submodule "md"]
 	path = md
 	url = https://github.com/ashqal/MD360Player4Android.git
+[submodule "spec"]
+	path = spec
+	url = https://github.com/protyposis/Spectaculum.git
